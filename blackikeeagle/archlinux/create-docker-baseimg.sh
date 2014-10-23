@@ -13,7 +13,7 @@ mkdir -p "$buildfolder"
 # haveged 
 
 pacstrap -C ./mkimage-arch-pacman.conf -c -G -M -d "$buildfolder" \
-	filesystem pacman gzip bzip2 sed grep gettext bash
+	filesystem shadow pacman gzip bzip2 sed grep gettext bash
 
 # clear packages cache
 rm -f "$buildfolder/var/cache/pacman/pkg/"*
