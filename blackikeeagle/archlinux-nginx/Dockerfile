@@ -11,5 +11,6 @@ RUN mkdir /srv/http/default
 ADD ./default/index.html /srv/http/default/index.html
 
 EXPOSE 80
+EXPOSE 443
 
 CMD ["/usr/sbin/nginx"]
