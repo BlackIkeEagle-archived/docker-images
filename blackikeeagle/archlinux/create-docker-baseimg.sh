@@ -44,8 +44,8 @@ mkdir store-locale
 cp -a "$buildfolder/usr/share/locale/"{locale.alias,en_US} store-locale
 
 # cleanup locale and manpage stuff, not needed to run in container
-toClean=('usr/share/locale' 'usr/share/man')
-noExtract='usr/share/locale usr/share/man'
+toClean=('usr/share/locale' 'usr/share/man' 'usr/include')
+noExtract='usr/share/locale usr/share/man usr/include'
 for clean in ${toClean[@]}; do
 	rm -rf "$buildfolder/$clean"/*
 	noExtract="$noExtract $clean/*"
