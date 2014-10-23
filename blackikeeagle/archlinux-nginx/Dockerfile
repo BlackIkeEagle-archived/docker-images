@@ -10,6 +10,9 @@ ADD ./config/00-default.conf /etc/nginx/sites-enabled/00-default.conf
 RUN mkdir /srv/http/default
 ADD ./default/index.html /srv/http/default/index.html
 
+ONBUILD RUN rm /etc/nginx/sites-enabled/00-default.conf
+ONBUILD ADD ./sites/*.conf /etc/nginx/sites-enabled/
+
 EXPOSE 80
 EXPOSE 443
 
