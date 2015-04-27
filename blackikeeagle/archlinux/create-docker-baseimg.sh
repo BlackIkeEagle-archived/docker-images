@@ -6,14 +6,8 @@ buildfolder=$(basename $0)-$RANDOM
 
 mkdir -p "$buildfolder"
 
-#pacstrap -C ./mkimage-arch-pacman.conf -c -G -M -d "$buildfolder" \
-	#bash bzip2 coreutils file filesystem findutils gawk gcc-libs gettext glibc \
-	#grep gzip inetutils iputils iproute2 pacman procps-ng sed \
-	#shadow tar util-linux which
-# haveged 
-
 pacstrap -C ./mkimage-arch-pacman.conf -c -G -M -d "$buildfolder" \
-	filesystem shadow pacman gzip bzip2 sed grep gettext bash
+	filesystem shadow pacman gzip bzip2 sed grep gettext bash haveged
 
 # clear packages cache
 rm -f "$buildfolder/var/cache/pacman/pkg/"*
@@ -36,9 +30,6 @@ mknod -m 666 "$buildfolder/dev"/ptmx c 5 2
 # link pacman log to /dev/null
 arch-chroot "$buildfolder" ln -s /dev/null /var/log/pacman.log
 
-# update supervisord config
-#sed -e "s,nodaemon=false,nodaemon=true ," -i "$buildfolder/etc/supervisord.conf"
-
 # backup required locale stuff
 mkdir store-locale
 cp -a "$buildfolder/usr/share/locale/"{locale.alias,en_US} store-locale
@@ -50,7 +41,7 @@ for clean in ${toClean[@]}; do
 	rm -rf "$buildfolder/$clean"/*
 	noExtract="$noExtract $clean/*"
 done
-sed -e "s,^#NoExtract.*,NoExtract = $noExtract," \
+sed -e "s,^#NoExtract.*,NoExtract = $noExtract !usr/share/locale/en* !usr/share/locale/locale.alias," \
 	-i "$buildfolder/etc/pacman.conf"
 
 # restore required locale stuff
@@ -66,16 +57,12 @@ echo 'Server = http://mirrors.kernel.org/archlinux/$repo/os/$arch' >\
 	"$buildfolder/etc/pacman.d/mirrorlist"
 
 # init keyring
-#arch-chroot "$buildfolder" \
-	#/bin/sh -c 'haveged -w 2048; \
-		#pacman-key --init; \
-		#pacman-key --populate archlinux; \
-		#pkill haveged; \
-		#pacman -Rcs --noconfirm haveged'
-
 arch-chroot "$buildfolder" \
-	/bin/sh -c 'pacman-key --init; \
-		pacman-key --populate archlinux'
+    /bin/sh -c 'haveged -w 2048; \
+        pacman-key --init; \
+        pacman-key --populate archlinux; \
+        pkill haveged; \
+        pacman -Rcs --noconfirm haveged'
 
 imageid=$(tar --numeric-owner -C "$buildfolder" -c . | docker import - blackikeeagle/archlinux)
 docker tag $imageid blackikeeagle/archlinux:$(date +%Y%m%d)
