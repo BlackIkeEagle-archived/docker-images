@@ -7,7 +7,7 @@ buildfolder=$(basename $0)-$RANDOM
 mkdir -p "$buildfolder"
 
 pacstrap -C ./mkimage-arch-pacman.conf -c -G -M -d "$buildfolder" \
-	filesystem shadow pacman gzip bzip2 sed grep gettext bash haveged
+    filesystem shadow pacman gzip bzip2 sed grep gettext bash haveged
 
 # clear packages cache
 rm -f "$buildfolder/var/cache/pacman/pkg/"*
@@ -38,11 +38,11 @@ cp -a "$buildfolder/usr/share/locale/"{locale.alias,en_US} store-locale
 toClean=('usr/share/locale' 'usr/share/man' 'usr/include')
 noExtract='usr/share/locale usr/share/man usr/include'
 for clean in ${toClean[@]}; do
-	rm -rf "$buildfolder/$clean"/*
-	noExtract="$noExtract $clean/*"
+    rm -rf "$buildfolder/$clean"/*
+    noExtract="$noExtract $clean/*"
 done
 sed -e "s,^#NoExtract.*,NoExtract = $noExtract !usr/share/locale/en* !usr/share/locale/locale.alias," \
-	-i "$buildfolder/etc/pacman.conf"
+    -i "$buildfolder/etc/pacman.conf"
 
 # restore required locale stuff
 cp -a store-locale/* "$buildfolder/usr/share/locale/"
@@ -54,7 +54,7 @@ arch-chroot "$buildfolder" locale-gen
 
 # set default mirror
 echo 'Server = http://mirrors.kernel.org/archlinux/$repo/os/$arch' >\
-	"$buildfolder/etc/pacman.d/mirrorlist"
+    "$buildfolder/etc/pacman.d/mirrorlist"
 
 # init keyring
 arch-chroot "$buildfolder" \
