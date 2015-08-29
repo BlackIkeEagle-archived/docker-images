@@ -7,7 +7,7 @@ buildfolder=$(basename $0)-$RANDOM
 mkdir -p "$buildfolder"
 
 pacstrap -C ./mkimage-arch-pacman.conf -c -G -M -d "$buildfolder" \
-    filesystem shadow pacman gzip bzip2 sed grep gettext bash haveged
+    filesystem shadow pacman gzip bzip2 sed grep gettext bash procps-ng haveged
 
 # clear packages cache
 rm -f "$buildfolder/var/cache/pacman/pkg/"*
@@ -62,9 +62,9 @@ arch-chroot "$buildfolder" \
         pacman-key --init; \
         pacman-key --populate archlinux; \
         pkill haveged; \
-        pacman -Rcs --noconfirm haveged'
+        pacman -Rcs --noconfirm haveged;'
 
-imageid=$(tar --numeric-owner -C "$buildfolder" -c . | docker import - blackikeeagle/archlinux)
+imageid=$(tar --exclude=etc/pacman.d/gnupg/S.gpg-agent --numeric-owner --xattrs --acls -C "$buildfolder" -c . | docker import - blackikeeagle/archlinux)
 docker tag $imageid blackikeeagle/archlinux:$(date +%Y%m%d)
 
 rm -rf "$buildfolder"
