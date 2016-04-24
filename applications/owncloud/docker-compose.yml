@@ -1,0 +1,32 @@
+version: '2'
+
+services:
+  mysql:
+    image: docker.herecura.eu/alpine-mariadb
+    network_mode: bridge
+
+  memcached:
+    image: docker.herecura.eu/alpine-memcached
+    network_mode: bridge
+
+  owncloud:
+    build: ./owncloudphp
+    image: owncloud-php
+    environment:
+      - C_UID=1000
+      - C_GID=100
+    volumes:
+      - ./owncloud:/var/www/owncloud
+    links:
+      - mysql
+      - memcached
+    network_mode: bridge
+
+  nginx:
+    build: ./owncloudnginx
+    image: owncloud-nginx
+    volumes_from:
+      - owncloud
+    links:
+      - owncloud
+    network_mode: bridge
