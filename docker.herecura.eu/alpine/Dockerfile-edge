@@ -1,0 +1,6 @@
+FROM alpine:edge
+MAINTAINER Ike Devolder, ike.devolder@gmail.com
+
+COPY ./container /container
+
+RUN /container/user-cleanup.sh
