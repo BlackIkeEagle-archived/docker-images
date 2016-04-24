@@ -1,0 +1,17 @@
+version: '2'
+
+services:
+  testphp:
+    image: docker.herecura.eu/alpine-php-fpm
+    volumes:
+      - ./default:/var/www/default
+    network_mode: bridge
+
+  testnginx:
+    build: ./testnginx
+    image: test-php-nginx
+    volumes_from:
+      - testphp
+    links:
+      - testphp
+    network_mode: bridge
